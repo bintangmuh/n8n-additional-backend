@@ -5,7 +5,16 @@ import { setupInteractionHandler } from './discord-interactions.js'
 import { registerCommands } from './discord-commands.js'
 
 import "dotenv/config";
-  
+
+// Global error handlers
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception thrown:', err);
+});
+
 const app = new Hono()
 
 app.get('/', (c) => {

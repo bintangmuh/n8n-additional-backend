@@ -48,52 +48,63 @@ export async function handleTodoCommand(interaction: any) {
 
 export function setupInteractionHandler(client: Client) {
   client.on('interactionCreate', async (interaction: Interaction) => {
-    if (!interaction.isChatInputCommand()) return
+    try {
+      if (!interaction.isChatInputCommand()) return
 
-    switch (interaction.commandName) {
-      case 'ping':
-        await interaction.reply('Pong!')
-        break
-      case 'hello-start':
-        await interaction.reply('Hello!')
-        break
-      case 'all-options': {
-        const string = interaction.options.getString('string')
-        const integer = interaction.options.getInteger('integer')
-        const boolean = interaction.options.getBoolean('boolean')
-        const user = interaction.options.getUser('user')
-        const member = interaction.options.getMember('user')
-        const channel = interaction.channel
-        const role = interaction.options.getRole('role')
-        const mentionable = interaction.options.getMentionable('mentionable')
-        const number = interaction.options.getNumber('number')
-        const attachment = interaction.options.getAttachment('attachment')
+      switch (interaction.commandName) {
+        case 'ping':
+          await interaction.reply('Pong!')
+          break
+        case 'hello-start':
+          await interaction.reply('Hello!')
+          break
+        case 'all-options': {
+          const string = interaction.options.getString('string')
+          const integer = interaction.options.getInteger('integer')
+          const boolean = interaction.options.getBoolean('boolean')
+          const user = interaction.options.getUser('user')
+          const member = interaction.options.getMember('user')
+          const channel = interaction.channel
+          const role = interaction.options.getRole('role')
+          const mentionable = interaction.options.getMentionable('mentionable')
+          const number = interaction.options.getNumber('number')
+          const attachment = interaction.options.getAttachment('attachment')
 
-        let channelName = 'unknown channel'
-        if (channel && channel instanceof GuildChannel) {
-          channelName = channel.name
+          let channelName = 'unknown channel'
+          if (channel && channel instanceof GuildChannel) {
+            channelName = channel.name
+          }
+
+          await interaction.reply({
+            content: `
+              String: ${string}
+              Integer: ${integer}
+              Boolean: ${boolean}
+              User: ${user}
+              Member: ${member}
+              Channel: ${channelName}
+              Role: ${role}
+              Mentionable: ${mentionable}
+              Number: ${number}
+              Attachment: ${attachment?.url}
+            `,
+            ephemeral: true,
+          })
+          break
         }
-
-        await interaction.reply({
-          content: `
-String: ${string}
-Integer: ${integer}
-Boolean: ${boolean}
-User: ${user}
-Member: ${member}
-Channel: ${channelName}
-Role: ${role}
-Mentionable: ${mentionable}
-Number: ${number}
-Attachment: ${attachment?.url}
-          `,
-          ephemeral: true,
-        })
-        break
+        case 'todo':
+          await handleTodoCommand(interaction)
+          break
       }
-      case 'todo':
-        await handleTodoCommand(interaction)
-        break
+    } catch (error) {
+      console.error('Error in interactionCreate handler:', error)
+      if (interaction.isRepliable && interaction.isRepliable()) {
+        try {
+          await interaction.reply({ content: 'An error occurred while handling your command.', ephemeral: true })
+        } catch (e) {
+          // Ignore if already replied
+        }
+      }
     }
   })
 }
