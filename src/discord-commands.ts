@@ -63,14 +63,6 @@ export const commands: RESTPostAPIApplicationCommandsJSONBody[] = [
     )
     .addSubcommand((subcommand) =>
       subcommand
-        .setName('remove')
-        .setDescription('Remove a todo item by id')
-        .addIntegerOption((option) =>
-          option.setName('id').setDescription('ID of item to remove').setRequired(true),
-        ),
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
         .setName('summary')
         .setDescription('Summary with AI')
     )
@@ -80,6 +72,26 @@ export const commands: RESTPostAPIApplicationCommandsJSONBody[] = [
         .setDescription('Mark a todo item as done by id')
         .addIntegerOption((option) =>
           option.setName('id').setDescription('ID of item to mark done').setRequired(true),
+        ),
+    )
+    .addSubcommand((subcommand) =>
+      subcommand
+        .setName('update')
+        .setDescription('Update a todo item by id')
+        .addIntegerOption((option) =>
+          option.setName('id').setDescription('ID of item to update').setRequired(true),
+        )
+        .addStringOption((option) =>
+          option.setName('item').setDescription('Updated item description').setRequired(false),
+        )
+        .addStringOption((option) =>
+          option.setName('project').setDescription('Updated project name').setRequired(false),
+        )
+        .addStringOption((option) =>
+          option.setName('type').setDescription('Updated type of todo').setRequired(false),
+        )
+        .addStringOption((option) =>
+          option.setName('status').setDescription('Updated status of todo').setRequired(false),
         ),
     )
     .toJSON(),

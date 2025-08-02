@@ -26,6 +26,14 @@ export async function handleTodoCommand(interaction: any) {
       const id = interaction.options.getInteger('id', true)
       result = await sendToTodoWebhooks({ action: 'done', id, channel: channelName })
       await interaction.reply(`Marked todo item as done with id: ${id}`)
+    } else if (subcommand === 'update') {
+      const id = interaction.options.getInteger('id', true)
+      const item = interaction.options.getString('item', false)
+      const project = interaction.options.getString('project', false)
+      const type = interaction.options.getString('type', false)
+      const status = interaction.options.getString('status', false)
+      result = await sendToTodoWebhooks({ action: 'update', id, item, project, type, status, channel: channelName })
+      await interaction.reply(`Updated todo item with id: ${id}`)
     } else {
       await interaction.reply('Unknown subcommand')
     }
@@ -40,7 +48,6 @@ export async function handleTodoCommand(interaction: any) {
 
 export function setupInteractionHandler(client: Client) {
   client.on('interactionCreate', async (interaction: Interaction) => {
-    console.log("Interactions: ", interaction)
     if (!interaction.isChatInputCommand()) return
 
     switch (interaction.commandName) {
